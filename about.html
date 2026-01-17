@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Secure Vault</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    background: #0e0e0e;
+    font-family: Arial, sans-serif;
+    color: #eaeaea;
+    text-align: center;
+    padding-top: 70px;
+}
+
+.card {
+    background: #151515;
+    width: 94%;
+    max-width: 520px;
+    margin: auto;
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.85);
+    border: 1px solid #2a2a2a;
+}
+
+.vault-icon {
+    font-size: 48px;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+/* ✅ FIXED PROGRESS BAR */
+.progress {
+    display: flex;
+    justify-content: space-between;
+    margin: 25px 0;
+    font-size: 12px;
+}
+
+.step {
+    flex: 1;
+    position: relative;
+    text-align: center;
+    color: #888;
+}
+
+.step::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: -50%;
+    width: 100%;
+    height: 2px;
+    background: #333;
+    z-index: 0;
+}
+
+.step:first-child::before {
+    display: none;
+}
+
+.step.active {
+    color: #28a745;
+}
+
+.step.active::before {
+    background: #28a745;
+}
+
+/* END FIX */
+
+.success {
+    color: #28a745;
+    font-size: 22px;
+    margin-top: 10px;
+}
+
+.section {
+    background: #1b1b1b;
+    border: 1px solid #2c2c2c;
+    border-radius: 10px;
+    padding: 18px;
+    margin-top: 20px;
+    text-align: left;
+}
+
+.section h3 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: #9fd3ff;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin: 6px 0;
+    color: #ccc;
+}
+
+.row strong {
+    color: #fff;
+}
+
+.warning {
+    margin-top: 22px;
+    font-size: 12px;
+    color: #d6c06a;
+    background: #2a240f;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+button {
+    margin-top: 30px;
+    padding: 12px 28px;
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <div class="vault-icon">🏦</div>
+    <h1>Secure Vault</h1>
+
+    <!-- ✅ CLEAN PROGRESS BAR -->
+    <div class="progress">
+        <div class="step active">Login</div>
+        <div class="step active">Verification</div>
+        <div class="step active">Deposit</div>
+        <div class="step active">Completed</div>
+    </div>
+
+    <div class="success">✅ Deposit Successful</div>
+
+    <div class="section">
+        <h3>Transaction Details</h3>
+        <div class="row"><span>Transaction ID</span><strong>TXN-9F38A2C1</strong></div>
+        <div class="row"><span>Date & Time</span><strong>18 Jan 2026, 14:32 UTC</strong></div>
+        <div class="row"><span>Vault ID</span><strong>SV-****-8392</strong></div>
+        <div class="row"><span>Status</span><strong>Completed</strong></div>
+    </div>
+
+    <div class="section">
+        <h3>Vault Balance Summary</h3>
+        <div class="row"><span>Total Deposit</span><strong>95,000</strong></div>
+        <div class="row"><span>Bonus Amount</span><strong>20,000</strong></div>
+        <div class="row"><span>New Vault Balance</span><strong>95,000</strong></div>
+    </div>
+
+    <div class="section">
+        <h3>Activity Log</h3>
+        <div class="row"><span>✔ Login authenticated</span><span>Completed</span></div>
+        <div class="row"><span>✔ 2FA verified</span><span>Completed</span></div>
+        <div class="row"><span>✔ Deposit processed</span><span>Completed</span></div>
+        <div class="row"><span>✔ Vault integrity check</span><span>Passed</span></div>
+    </div>
+
+    <div class="warning">
+        🔐 Do not share your vault or transaction details with anyone.
+    </div>
+
+    <button onclick="logout()">Logout</button>
+</div>
+
+<script>
+if (sessionStorage.getItem("loggedIn") !== "true") {
+    window.location.href = "index.html";
+}
+
+function logout() {
+    sessionStorage.removeItem("loggedIn");
+    window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
