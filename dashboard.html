@@ -26,15 +26,29 @@ body {
     border: 1px solid #2a2a2a;
 }
 
-.vault-icon {
-    font-size: 48px;
+.vault-icon { font-size: 48px; }
+
+h1 { margin-bottom: 6px; }
+
+/* 🏦 Security badge */
+.security-badge {
+    display: inline-block;
+    margin-bottom: 6px;
+    padding: 6px 12px;
+    font-size: 11px;
+    color: #8bd1ff;
+    background: #10202b;
+    border: 1px solid #1e3a4a;
+    border-radius: 999px;
 }
 
-h1 {
-    margin-bottom: 10px;
+/* ⏳ Session timer */
+.session-timer {
+    font-size: 11px;
+    color: #bbb;
+    margin-bottom: 14px;
 }
 
-/* ✅ FIXED PROGRESS BAR */
 .progress {
     display: flex;
     justify-content: space-between;
@@ -57,22 +71,12 @@ h1 {
     width: 100%;
     height: 2px;
     background: #333;
-    z-index: 0;
 }
 
-.step:first-child::before {
-    display: none;
-}
+.step:first-child::before { display: none; }
 
-.step.active {
-    color: #28a745;
-}
-
-.step.active::before {
-    background: #28a745;
-}
-
-/* END FIX */
+.step.active { color: #28a745; }
+.step.active::before { background: #28a745; }
 
 .success {
     color: #28a745;
@@ -98,6 +102,7 @@ h1 {
 .row {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 14px;
     margin: 6px 0;
     color: #ccc;
@@ -105,7 +110,19 @@ h1 {
 
 .row strong {
     color: #fff;
+    letter-spacing: 1px;
 }
+
+/* 🔐 Reveal button */
+.reveal-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+    color: #aaa;
+}
+.reveal-btn:hover { color: #fff; }
+.reveal-btn svg { width: 16px; height: 16px; }
 
 .warning {
     margin-top: 22px;
@@ -116,7 +133,7 @@ h1 {
     border-radius: 8px;
 }
 
-button {
+button.logout {
     margin-top: 30px;
     padding: 12px 28px;
     background: #dc3545;
@@ -124,6 +141,35 @@ button {
     border: none;
     border-radius: 6px;
     cursor: pointer;
+}
+
+/* 🔔 Toast */
+.toast {
+    position: fixed;
+    bottom: 55px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f1f1f;
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.6);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+}
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-6px);
+}
+
+/* 🌐 IP info */
+.ip-info {
+    margin-top: 18px;
+    font-size: 11px;
+    color: #888;
+    opacity: 0.85;
 }
 </style>
 </head>
@@ -134,8 +180,9 @@ button {
 
     <div class="vault-icon">🏦</div>
     <h1>Secure Vault</h1>
+    <div class="security-badge">🔒 Encrypted Vault • AES-256 • Secure Session</div>
+    <div class="session-timer" id="sessionTimer">Session expires in 05:00</div>
 
-    <!-- ✅ CLEAN PROGRESS BAR -->
     <div class="progress">
         <div class="step active">Login</div>
         <div class="step active">Verification</div>
@@ -148,41 +195,120 @@ button {
     <div class="section">
         <h3>Transaction Details</h3>
         <div class="row"><span>Transaction ID</span><strong>TXN-9F38A2C1</strong></div>
-        <div class="row"><span>Date & Time</span><strong>18 Jan 2026, 14:32 UTC</strong></div>
-        <div class="row"><span>Vault ID</span><strong>SV-****-8392</strong></div>
+        <div class="row"><span>Date & Time</span><strong>18 Jan 2026</strong></div>
+
+        <div class="row">
+            <span>Vault ID</span>
+            <div style="display:flex;align-items:center;">
+                <strong id="vaultId" data-full="SV-ABCD-8392">SV-****-8392</strong>
+                <button class="reveal-btn" onclick="toggleVaultId()">
+                    <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-width="2"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-width="2"
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5
+                                 c4.478 0 8.268 2.943 9.542 7
+                                 -1.274 4.057-5.064 7-9.542 7
+                                 -4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
         <div class="row"><span>Status</span><strong>Completed</strong></div>
-    </div>
-
-    <div class="section">
-        <h3>Vault Balance Summary</h3>
-        <div class="row"><span>Total Deposit</span><strong>75,000</strong></div>
-        <div class="row"><span>Bonus Amount</span><strong>20,000</strong></div>
-        <div class="row"><span>New Vault Balance</span><strong>95,000</strong></div>
-    </div>
-
-    <div class="section">
-        <h3>Activity Log</h3>
-        <div class="row"><span>✔ Login authenticated</span><span>Completed</span></div>
-        <div class="row"><span>✔ 2FA verified</span><span>Completed</span></div>
-        <div class="row"><span>✔ Deposit processed</span><span>Completed</span></div>
-        <div class="row"><span>✔ Vault integrity check</span><span>Passed</span></div>
     </div>
 
     <div class="warning">
         🔐 Do not share your vault or transaction details with anyone.
     </div>
 
-    <button onclick="logout()">Logout</button>
+    <button class="logout" onclick="logout()">Logout</button>
+
+    <!-- 🌐 IP DISPLAY -->
+    <div class="ip-info" id="ipInfo">🌐 Detecting session IP…</div>
+
 </div>
 
+<div id="toast" class="toast"></div>
+
 <script>
+/* 🔒 Login check */
 if (sessionStorage.getItem("loggedIn") !== "true") {
     window.location.href = "index.html";
 }
 
+/* ⏳ Session expiry */
+const SESSION_DURATION = 5 * 60;
+let expiry = sessionStorage.getItem("sessionExpiry");
+
+if (!expiry) {
+    expiry = Math.floor(Date.now() / 1000) + SESSION_DURATION;
+    sessionStorage.setItem("sessionExpiry", expiry);
+}
+
+const timerEl = document.getElementById("sessionTimer");
+
+setInterval(() => {
+    const now = Math.floor(Date.now() / 1000);
+    const remaining = expiry - now;
+
+    if (remaining <= 0) {
+        showToast("Session expired. Logging out…");
+        sessionStorage.clear();
+        setTimeout(() => location.href = "index.html", 2000);
+        return;
+    }
+
+    const m = String(Math.floor(remaining / 60)).padStart(2, "0");
+    const s = String(remaining % 60).padStart(2, "0");
+    timerEl.textContent = `Session expires in ${m}:${s}`;
+}, 1000);
+
+/* 🔔 Toast */
+function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+/* 🔐 Vault reveal */
+let hideTimer;
+
+function toggleVaultId() {
+    const v = document.getElementById("vaultId");
+    const masked = "SV-****-8392";
+
+    clearTimeout(hideTimer);
+
+    if (v.textContent === masked) {
+        v.textContent = v.dataset.full;
+        showToast("Vault ID revealed for 5 seconds");
+        hideTimer = setTimeout(() => v.textContent = masked, 5000);
+    } else {
+        v.textContent = masked;
+    }
+}
+
+/* 🌐 Load IP */
+async function loadIP() {
+    try {
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+        const maskedIP = data.ip.replace(/\d+$/, "***");
+        document.getElementById("ipInfo").textContent =
+            `🌐 Session IP: ${maskedIP} • ${data.country_code}`;
+    } catch {
+        document.getElementById("ipInfo").textContent =
+            "🌐 Session IP unavailable";
+    }
+}
+loadIP();
+
 function logout() {
-    sessionStorage.removeItem("loggedIn");
-    window.location.href = "index.html";
+    sessionStorage.clear();
+    location.href = "index.html";
 }
 </script>
 
