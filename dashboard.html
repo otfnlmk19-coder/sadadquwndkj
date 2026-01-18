@@ -27,10 +27,9 @@ body {
 }
 
 .vault-icon { font-size: 48px; }
-
 h1 { margin-bottom: 6px; }
 
-/* 🏦 Security badge */
+/* Security badge */
 .security-badge {
     display: inline-block;
     margin-bottom: 6px;
@@ -42,7 +41,7 @@ h1 { margin-bottom: 6px; }
     border-radius: 999px;
 }
 
-/* ⏳ Session timer */
+/* Session timer */
 .session-timer {
     font-size: 11px;
     color: #bbb;
@@ -74,7 +73,6 @@ h1 { margin-bottom: 6px; }
 }
 
 .step:first-child::before { display: none; }
-
 .step.active { color: #28a745; }
 .step.active::before { background: #28a745; }
 
@@ -113,7 +111,7 @@ h1 { margin-bottom: 6px; }
     letter-spacing: 1px;
 }
 
-/* 🔐 Reveal button */
+/* Vault reveal */
 .reveal-btn {
     background: none;
     border: none;
@@ -143,7 +141,7 @@ button.logout {
     cursor: pointer;
 }
 
-/* 🔔 Toast */
+/* Toast */
 .toast {
     position: fixed;
     bottom: 55px;
@@ -164,7 +162,7 @@ button.logout {
     transform: translateX(-50%) translateY(-6px);
 }
 
-/* 🌐 IP info */
+/* IP info */
 .ip-info {
     margin-top: 18px;
     font-size: 11px;
@@ -192,6 +190,7 @@ button.logout {
 
     <div class="success">✅ Deposit Successful</div>
 
+    <!-- Transaction Details -->
     <div class="section">
         <h3>Transaction Details</h3>
         <div class="row"><span>Transaction ID</span><strong>TXN-9F38A2C1</strong></div>
@@ -202,7 +201,7 @@ button.logout {
             <div style="display:flex;align-items:center;">
                 <strong id="vaultId" data-full="SV-ABCD-8392">SV-****-8392</strong>
                 <button class="reveal-btn" onclick="toggleVaultId()">
-                    <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                          viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-width="2"
                               d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -219,13 +218,30 @@ button.logout {
         <div class="row"><span>Status</span><strong>Completed</strong></div>
     </div>
 
+    <!-- Vault Balance -->
+    <div class="section">
+        <h3>Vault Balance Summary</h3>
+        <div class="row"><span>Total Deposit</span><strong>75,000</strong></div>
+        <div class="row"><span>Bonus Amount</span><strong>20,000</strong></div>
+        <div class="row"><span>New Vault Balance</span><strong>95,000</strong></div>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="section">
+        <h3>Activity Log</h3>
+        <div class="row"><span>✔ Login authenticated</span><span>Completed</span></div>
+        <div class="row"><span>✔ 2FA verified</span><span>Completed</span></div>
+        <div class="row"><span>✔ Deposit processed</span><span>Completed</span></div>
+        <div class="row"><span>✔ Vault integrity check</span><span>Passed</span></div>
+    </div>
+
     <div class="warning">
         🔐 Do not share your vault or transaction details with anyone.
     </div>
 
     <button class="logout" onclick="logout()">Logout</button>
 
-    <!-- 🌐 IP DISPLAY -->
+    <!-- IP info -->
     <div class="ip-info" id="ipInfo">🌐 Detecting session IP…</div>
 
 </div>
@@ -233,13 +249,13 @@ button.logout {
 <div id="toast" class="toast"></div>
 
 <script>
-/* 🔒 Login check */
+/* Login check */
 if (sessionStorage.getItem("loggedIn") !== "true") {
-    window.location.href = "index.html";
+    location.href = "index.html";
 }
 
-/* ⏳ Session expiry */
-const SESSION_DURATION = 5 * 60;
+/* Session expiry (5 min) */
+const SESSION_DURATION = 300;
 let expiry = sessionStorage.getItem("sessionExpiry");
 
 if (!expiry) {
@@ -247,25 +263,19 @@ if (!expiry) {
     sessionStorage.setItem("sessionExpiry", expiry);
 }
 
-const timerEl = document.getElementById("sessionTimer");
-
 setInterval(() => {
-    const now = Math.floor(Date.now() / 1000);
-    const remaining = expiry - now;
-
+    const remaining = expiry - Math.floor(Date.now() / 1000);
     if (remaining <= 0) {
         showToast("Session expired. Logging out…");
         sessionStorage.clear();
         setTimeout(() => location.href = "index.html", 2000);
         return;
     }
-
-    const m = String(Math.floor(remaining / 60)).padStart(2, "0");
-    const s = String(remaining % 60).padStart(2, "0");
-    timerEl.textContent = `Session expires in ${m}:${s}`;
+    document.getElementById("sessionTimer").textContent =
+        `Session expires in ${String(Math.floor(remaining/60)).padStart(2,"0")}:${String(remaining%60).padStart(2,"0")}`;
 }, 1000);
 
-/* 🔔 Toast */
+/* Toast */
 function showToast(msg) {
     const t = document.getElementById("toast");
     t.textContent = msg;
@@ -273,38 +283,31 @@ function showToast(msg) {
     setTimeout(() => t.classList.remove("show"), 3000);
 }
 
-/* 🔐 Vault reveal */
+/* Vault reveal */
 let hideTimer;
-
 function toggleVaultId() {
     const v = document.getElementById("vaultId");
-    const masked = "SV-****-8392";
-
     clearTimeout(hideTimer);
-
-    if (v.textContent === masked) {
+    if (v.textContent.includes("*")) {
         v.textContent = v.dataset.full;
         showToast("Vault ID revealed for 5 seconds");
-        hideTimer = setTimeout(() => v.textContent = masked, 5000);
+        hideTimer = setTimeout(() => v.textContent = "SV-****-8392", 5000);
     } else {
-        v.textContent = masked;
+        v.textContent = "SV-****-8392";
     }
 }
 
-/* 🌐 Load IP */
-async function loadIP() {
+/* IP fetch */
+(async () => {
     try {
         const res = await fetch("https://ipapi.co/json/");
-        const data = await res.json();
-        const maskedIP = data.ip.replace(/\d+$/, "***");
+        const d = await res.json();
         document.getElementById("ipInfo").textContent =
-            `🌐 Session IP: ${maskedIP} • ${data.country_code}`;
+            `🌐 Session IP: ${d.ip.replace(/\d+$/, "***")} • ${d.country_code}`;
     } catch {
-        document.getElementById("ipInfo").textContent =
-            "🌐 Session IP unavailable";
+        document.getElementById("ipInfo").textContent = "🌐 Session IP unavailable";
     }
-}
-loadIP();
+})();
 
 function logout() {
     sessionStorage.clear();
